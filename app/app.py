@@ -113,6 +113,14 @@ def qrcode_status():
         print("登录成功")
         print(cookies)
 
+        # 确保目录存在
+        cookie_dir = os.path.dirname(cookie_file_path)
+        if not os.path.exists(cookie_dir):
+            try:
+                os.makedirs(cookie_dir)
+                print(f"目录 {cookie_dir} 创建成功")
+            except Exception as e:
+                print(f"创建目录时出错: {e}")
         # 写入 cookie.txt 文件
         try:
             with open(cookie_file_path, "w") as f:
