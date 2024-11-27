@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bili Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles_dashboard.css">
+</head>
+
+<body>
+    <div id="header">
+        <img src="/static/img/logo.png" alt="Logo" id="logo">
+        <span id="logo-text">bilibili Recommender</span>
+        <button id="logout-btn" class="logout-btn">Log Out</button>
+    </div>
+
+    <div id="main-content">
+        <div id="recommended-videos">
+            <h2>Recommended for You</h2>
+            <div id="video-list">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // logout
+            document.getElementById('logout-btn').addEventListener('click', function () {
+                fetch('/logout', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/login';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Logout error:", error);
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>

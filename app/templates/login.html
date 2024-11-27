@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/styles_login.css">
+</head>
+
+<body>
+    <div id="header">
+        <img src="/static/img/logo.png" alt="Logo" id="logo">
+        <span id="logo-text">bilibili Recommender</span>
+    </div>
+    <h1>Scan the QR Code to Login</h1>
+    <div id="status" class="loading">等待扫码...</div>
+    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+
+    <script>
+        let islogin = false;
+        let pollInterval;
+
+        // 轮询登录状态
+        function pollLoginStatus(qrcodeKey) {
+            if (islogin) return;
+
+            fetch(`/qrcode_status?qrcode_key=${qrcodeKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'scanned but not confirmed') {
+                        if (islogin)
+                            return;
+                        document.getElementById('status').innerText = '已扫描，等待确认...';
+                    } else if (data.status === 'login success') {
+                        document.getElementById('status').innerText = '登录成功！';
+                        console.log('Cookies:', data.cookies);
+
+                        islogin = true;
+                        // 登录成功后停止轮询
+                        clearInterval(pollInterval);
+                        setTimeout(function () {
+                            window.location.href = '/dashboard';
+                        }, 1000);
+                    } else if (data.error) {
+                        if (islogin)
+                            return;
+                        document.getElementById('status').innerText = '二维码失效或超时，请重新操作。';
+                    }
+                })
+                .catch(error => {
+                    if (islogin)
+                        return;
+                    document.getElementById('status').innerText = '发生错误，请重试。';
+                    console.error(error);
+                });
+        }
+
+        const qrcodeKey = '{{ qrcode_key }}';
+        // 每秒轮询一次
+        pollInterval = setInterval(() => pollLoginStatus(qrcodeKey), 1000);
+    </script>
+</body>
+
+</html>

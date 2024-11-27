@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;  /* Align to the top */
+    min-height: 100vh;
+}
+
+/* Header styling with logo, logo text, and logout button */
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#logo {
+    border: 5px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+}
+
+#logo-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ff5c8d;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    left: -32.5%;
+    margin-top: -10px;
+}
+
+.logout-btn {
+    background-color: #ff5c8d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #ff3c69;
+}
+
+/* Main content area */
+#main-content {
+    margin-top: 120px;  /* Push down content below the header */
+    padding: 20px;
+    width: 80%;
+    max-width: 1200px;
+}
+
+/* Recommended videos section */
+#recommended-videos {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#recommended-videos h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+#video-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}

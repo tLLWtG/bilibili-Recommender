@@ -1,0 +1,94 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+#header {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0px;
+    left: 20px;
+}
+
+#logo {
+    width: 60px;  /* Adjust logo size */
+    height: 60px;
+    margin-right: 10px;
+}
+
+#logo-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ff5c8d;  /* Set a bold color for the text */
+    background: linear-gradient(to right, #00c6ff, #0072ff);  /* Gradient background */
+    -webkit-background-clip: text;  /* Clip the background to the text */
+    background-clip: text;
+    color: transparent;  /* Make the text itself transparent so the gradient shows */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);  /* Add a shadow effect to the text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Use a modern font */
+    margin-top: 10px;  /* Adjust this value to move the text up */
+}
+
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#status {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: #555;
+    text-align: center;
+}
+
+img {
+    margin-top: 20px;
+    border: 5px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
+.loading {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    #status {
+        font-size: 1rem;
+    }
+
+    img {
+        width: 200px;
+        height: 200px;
+    }
+
+    #logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    #logo-text {
+        font-size: 1.5rem;
+    }
+}
