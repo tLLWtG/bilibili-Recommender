@@ -4,20 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bili Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="/static/css/styles_dashboard.css">
 </head>
 
 <body>
     <div id="header">
-        <img src="/static/img/logo.png" alt="Logo" id="logo">
-        <span id="logo-text">bilibili Recommender</span>
-        <button id="logout-btn" class="logout-btn">Log Out</button>
+        <div style="display: flex;justify-content: space-between;align-items: center;">
+            <img src="/static/img/logo.png" alt="Logo" id="logo">
+            <span id="logo-text">bilibili Recommender</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div id="avatar-container">
+                <img src="/static/img/avatar.jpg" alt="Avatar" id="avatar">
+            </div>
+            <button id="logout-btn" class="logout-btn">Log Out</button>
+        </div>
+    </div>
+
+    <div id="button-container">
+        <button id="hot-video-btn" class="video-btn">热门精选</button>
+        <button id="explore-btn" class="video-btn">兴趣探索</button>
     </div>
 
     <div id="main-content">
         <div id="recommended-videos">
-            <h2>Recommended for You</h2>
+            <h2 style="text-align: center;">Your Interests</h2>
             <div id="video-list">
 
             </div>

@@ -4,7 +4,8 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
+    flex-direction: column;
     align-items: flex-start;  /* Align to the top */
     min-height: 100vh;
 }
@@ -15,7 +16,7 @@ body {
     justify-content: space-between;
     align-items: center;
     position: fixed;
-    top: 20px;
+    top: 15px;
     left: 20px;
     right: 20px;
     z-index: 1000;
@@ -41,12 +42,10 @@ body {
     color: transparent;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: relative;
-    left: -32.5%;
-    margin-top: -10px;
 }
 
 .logout-btn {
+    text-align: right;
     background-color: #ff5c8d;
     color: white;
     border: none;
@@ -62,10 +61,12 @@ body {
 
 /* Main content area */
 #main-content {
-    margin-top: 120px;  /* Push down content below the header */
+    margin-top: 5vh;
     padding: 20px;
     width: 80%;
     max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Recommended videos section */
@@ -86,3 +87,87 @@ body {
     flex-wrap: wrap;
     gap: 15px;
 }
+
+/* 高级按钮样式 */
+.video-btn {
+    background: linear-gradient(45deg, #6a11cb, #2575fc); /* 渐变色：紫色到蓝色 */
+    color: white;
+    font-size: 18px;  /* 增大字体 */
+    padding: 15px 30px;  /* 增大内边距，按钮更大 */
+    margin: 0 10px;
+    border: none;
+    border-radius: 40px;  /* 更圆润的按钮边缘 */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;  /* 平滑过渡 */
+}
+
+/* 悬停效果 */
+.video-btn:hover {
+    background: linear-gradient(45deg, #ff007f, #9c27b0);  /* 悬停时渐变色：粉色到紫色 */
+    transform: scale(1.15);  /* 放大效果，按钮更大 */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);  /* 阴影效果更强 */
+}
+
+/* 按钮的光晕效果 */
+.video-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 350%;
+    height: 350%;
+    background: linear-gradient(45deg, #ff007f, #9c27b0, #ff007f);  /* 粉色到紫色的渐变光晕 */
+    border-radius: 50%;
+    transition: all 0.8s ease;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 0;
+}
+
+/* 悬停时光晕效果展开 */
+.video-btn:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;  /* 更强的光晕效果 */
+}
+
+/* 按钮文字在悬停时位于光晕之上 */
+.video-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+#button-container {
+    display: flex;
+    justify-content: center;  /* 确保按钮居中 */
+    gap: 10vw;  /* 按钮之间的间距 */
+    margin-top: 20vh;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Avatar container */
+#avatar-container {
+    width: 40px;  /* 可以根据需要调整大小 */
+    height: 40px;  /* 与宽度保持一致 */
+    border-radius: 50%;  /* 圆形 */
+    overflow: hidden;  /* 避免图片溢出 */
+    margin-right: 10px;  /* 按钮与头像之间的间距 */
+    border: 2px solid #ff5c8d;  /* 边框颜色 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 阴影效果 */
+    transition: all 0.3s ease;  /* 为边框和阴影增加过渡效果 */
+}
+
+/* Avatar image */
+#avatar {
+    width: 100%;  /* 让图片填满容器 */
+    height: 100%;  /* 保持图片的高度与宽度一致 */
+    object-fit: cover;  /* 确保图片填充圆形区域 */
+}
+
+/* Hover effect: 增加边框的亮度和阴影 */
+#avatar-container:hover {
+    border: 3px solid #ff3c69;  /* 鼠标悬停时改变边框颜色 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  /* 增强阴影效果 */
+}
+
