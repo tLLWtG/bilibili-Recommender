@@ -1,5 +1,4 @@
 import requests
-import selenium
 import json
 
 # cookie为用户的相关信息， len为需要读取的信息量（有可能会小于len,因为可能总共的信息就不多 ）
