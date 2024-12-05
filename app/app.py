@@ -1,10 +1,15 @@
 import time, os
+from urllib.parse import urlparse
 import requests
 import qrcode
 import base64
 from PIL import Image
 from io import BytesIO
 from flask import Flask, render_template, request, jsonify, redirect, url_for
+
+from app.getHistoryData import get_history_data
+from app.getHotData import get_hot_data
+from app.getRecommandData import get_recommand_data
 
 
 # app = Flask(__name__)
@@ -20,7 +25,11 @@ headers = {
 }
 
 cookie_file_path = "user_data/cookie.txt"
-cookie_data = ""
+cookie_data = {}
+cookie_str = ""
+
+img_path = "app/static/user_img"
+img_path_rel = "static/user_img"
 
 
 # 申请二维码 url
@@ -60,6 +69,7 @@ def generate_qrcode_base64(_url):
 
 
 def check_qrcode_status(qrcode_key):
+    global cookie_data, cookie_str
     response = requests.get(
         QR_CODE_POLL_URL, params={"qrcode_key": qrcode_key}, headers=headers
     )
@@ -70,31 +80,71 @@ def check_qrcode_status(qrcode_key):
         print(data)
         if code == 0:
             # 登录成功，返回 cookies 和其他数据
-            cookies = response.cookies.get_dict()
+            cookie_data = response.cookies.get_dict()
+            print(cookie_data)
+            # 将 cookies 转换为字符串
+            cookie_str = "; ".join(
+                [f"{key}={value}" for key, value in cookie_data.items()]
+            )
+            # add buvid3 for hotdata
+            cookie_str = "buvid3=1; " + cookie_str
+            print(cookie_str)
             timestamp = data["data"]["timestamp"]
             url = data["data"]["url"]
-            return code, timestamp, url, cookies
+            return code, timestamp, url, cookie_str
         else:
             # 其他状态
             return code, None, None, None
     return None, None, None, None
 
 
+def download_img(image_url):
+    if not os.path.exists(img_path):
+        try:
+            os.makedirs(img_path)
+            print(f"目录 {img_path} 创建成功")
+        except Exception as e:
+            print(f"创建目录时出错: {e}")
+    # 使用 urlparse 解析 URL
+    parsed_url = urlparse(image_url)
+    file_name = os.path.basename(parsed_url.path)
+    response = requests.get(image_url, headers=headers)
+    if response.status_code == 200:
+        with open(os.path.join(img_path, file_name), "wb") as file:
+            file.write(response.content)
+        print(f"图片下载成功，保存为 {os.path.join(img_path, file_name)}")
+    else:
+        print("图片下载失败，状态码:", response.status_code)
+
+
+def get_history_info():
+    history_info = get_history_data(cookie_str, 10)
+    for info in history_info:
+        download_img(info["pic"])
+    return history_info
+
+
 # 首页路由
 # @app.route("/")
 def home():
     # 判断是否已有 cookie，然后跳转对应界面
+    global cookie_str, headers
     if os.path.exists(cookie_file_path):
         with open(cookie_file_path, "r") as f:
-            cookie_data = f.read()
-            return redirect(url_for("dashboard"))
+            cookie_str = f.read()
+            headers["Cookie"] = cookie_str
+            print(f"read:{cookie_str}")
+            # return redirect(url_for("dashboard"))
+            return dashboard()
     else:
-        return redirect(url_for("login"))
+        # return redirect(url_for("login"))
+        return login()
 
 
 # login 接口
 # @app.route("/qrcode_status", methods=["GET"])
 def qrcode_status():
+    global headers
     qrcode_key = request.args.get("qrcode_key")
     if not qrcode_key:
         return jsonify({"error": "Missing qrcode_key"}), 400
@@ -124,11 +174,11 @@ def qrcode_status():
         # 写入 cookie.txt 文件
         try:
             with open(cookie_file_path, "w") as f:
-                f.write(f"{cookies['SESSDATA']}")
+                f.write(f"{cookies}")
             print(f"SESSDATA 已成功保存到 {cookie_file_path}")
+            headers["Cookie"] = cookies
         except Exception as e:
             print(f"保存 SESSDATA 时出错: {e}")
-        cookie_data = cookies["SESSDATA"]
         return (
             jsonify(
                 {
@@ -154,7 +204,24 @@ def login():
 
 # @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    global cookie_str
+    headers["Cookie"] = cookie_str
+    history_info = get_history_info()
+    for x in history_info:
+        parsed_url = urlparse(x["pic"])
+        file_name = os.path.basename(parsed_url.path)
+        full_path = os.path.join(img_path_rel, file_name)
+        x["pic"] = os.path.normpath(full_path).replace("\\", "/")
+        temp = []
+        count = 0
+        for xx in x["tag"]:
+            if len(xx) <= 8 and count < 2:  # 标签长度不超过 8 且最多取 2 个标签
+                temp.append(xx)
+                count += 1
+        x["tag"] = temp
+    return render_template(
+        "dashboard.html", cookie_str=cookie_str, history_info=history_info
+    )
 
 
 # @app.route("/logout", methods=["POST"])

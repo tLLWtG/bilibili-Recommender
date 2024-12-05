@@ -63,29 +63,25 @@ body {
 #main-content {
     margin-top: 5vh;
     padding: 20px;
-    width: 80%;
-    max-width: 1200px;
+    width: 70vw;
     margin-left: auto;
     margin-right: auto;
 }
 
 /* Recommended videos section */
-#recommended-videos {
+#your-interests {
+    display: flex;
+    flex-direction: column;
     background-color: white;
+    width: 100%;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#recommended-videos h2 {
+#your-interests h2 {
     font-size: 1.8rem;
     margin-bottom: 20px;
-}
-
-#video-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
 }
 
 /* 高级按钮样式 */
@@ -170,4 +166,30 @@ body {
     border: 3px solid #ff3c69;  /* 鼠标悬停时改变边框颜色 */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  /* 增强阴影效果 */
 }
+
+#tag-cloud {
+    width: 25vw;                 /* 宽度设为视口宽度的25% */
+    height: 30vh;                /* 高度设为视口高度的30% */
+    margin: 0 auto;              /* 居中显示 */
+    border-radius: 20px;         /* 加大圆角半径，使其更柔和 */
+    border: 2px solid #ccc;     /* 边框 */
+    background: linear-gradient(135deg, #ff7a18, #af002d); /* 背景渐变 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 增加阴影，提升立体感 */
+    padding: 10px;               /* 内边距，避免标签靠近边框 */
+    overflow: hidden;            /* 防止标签溢出 */
+    position: relative;          /* 设置定位 */
+    display: block;              /* 确保是块级元素 */
+    transition: transform 0.3s ease; /* 添加鼠标悬停时的过渡效果 */
+}
+
+#tag-cloud:hover {
+    transform: scale(1.05);      /* 鼠标悬停时，轻微放大 */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* 鼠标悬停时增加阴影 */
+}
+
+#tagList li {
+    user-select: none; /* 禁止选中文本 */
+    -webkit-user-select: none; /* 禁用Webkit浏览器中的选择 */
+}
+
 
