@@ -17,6 +17,14 @@
     <div id="status" class="loading">等待扫码...</div>
     <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
 
+    <!-- 弹窗和蒙版 -->
+    <div id="overlay" style="display: none;">
+        <div id="popup">
+            <p>正在分析您的喜好，请稍等片刻...</p>
+            <div class="loader"></div> <!-- 加载动画 -->
+        </div>
+    </div>
+
     <script>
         let islogin = false;
         let pollInterval;
@@ -40,7 +48,12 @@
                         // 登录成功后停止轮询
                         clearInterval(pollInterval);
                         setTimeout(function () {
-                            window.location.href = '/dashboard';
+                            // 显示弹窗加载动画
+                            document.getElementById('status').style.display = 'none'; // 隐藏登录状态
+                            document.getElementById('overlay').style.display = 'flex'; // 显示弹窗和蒙版
+                            setTimeout(function () {
+                                window.location.href = '/dashboard';
+                            }, 1000);
                         }, 1000);
                     } else if (data.error) {
                         if (islogin)
@@ -60,6 +73,73 @@
         // 每秒轮询一次
         pollInterval = setInterval(() => pollLoginStatus(qrcodeKey), 1000);
     </script>
+    <style>
+        /* 全屏蒙版 */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* 深色透明背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px); /* 背景模糊 */
+        }
+
+        /* 弹窗 */
+        #popup {
+            background: linear-gradient(145deg, #1d2b64, #f8cdda); /* 漂亮的渐变背景 */
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: popupIn 0.5s ease-out; /* 弹窗从下方进入动画 */
+        }
+
+        /* 弹窗出现的动画效果 */
+        @keyframes popupIn {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* 加载动画样式 */
+        .loader {
+            margin-top: 30px;
+            width: 60px;
+            height: 60px;
+            border: 10px solid rgba(255, 255, 255, 0.1);
+            border-top: 10px solid #ff7a18; /* 红色渐变 */
+            border-radius: 50%;
+            animation: rotate 1.5s linear infinite, pulse 1.5s ease-in-out infinite; /* 旋转和闪烁动画 */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 旋转动画 */
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 闪烁效果 */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px 5px rgba(255, 122, 24, 0.6); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 122, 24, 1); }
+        }
+
+        /* 文本样式 */
+        #popup p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4); /* 给文本加上阴影 */
+        }
+    </style>
 </body>
 
 </html>
