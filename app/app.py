@@ -124,6 +124,20 @@ def get_history_info():
     return history_info
 
 
+def get_hot_info():
+    hot_info = get_hot_data(cookie_str, 10)
+    for info in hot_info:
+        download_img(info["pic"])
+    return hot_info
+
+
+def get_explore_info():
+    explore_info = get_recommand_data(cookie_str, 10)
+    for info in explore_info:
+        download_img(info["pic"])
+    return explore_info
+
+
 # 首页路由
 # @app.route("/")
 def home():
@@ -230,3 +244,25 @@ def logout():
     if os.path.exists(cookie_file_path):
         os.remove(cookie_file_path)
     return jsonify({"success": True})
+
+
+# @app.route("/api/recommend-hot-vid", methods=["GET"])
+def recommend_hot_vid():
+    res = get_hot_info()
+    for x in res:
+        parsed_url = urlparse(x["pic"])
+        file_name = os.path.basename(parsed_url.path)
+        full_path = os.path.join(img_path_rel, file_name)
+        x["pic"] = os.path.normpath(full_path).replace("\\", "/")
+    return jsonify(res)
+
+
+# @app.route("/api/recommend-explore-vid", methods=["GET"])
+def recommend_explore_vid():
+    res = get_explore_info()
+    for x in res:
+        parsed_url = urlparse(x["pic"])
+        file_name = os.path.basename(parsed_url.path)
+        full_path = os.path.join(img_path_rel, file_name)
+        x["pic"] = os.path.normpath(full_path).replace("\\", "/")
+    return jsonify(res)
