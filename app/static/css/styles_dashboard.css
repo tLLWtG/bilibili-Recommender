@@ -235,3 +235,33 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 999;
 }
+
+/* 加载动画样式 */
+.loader {
+    margin-top: 30px;
+    width: 60px;
+    height: 60px;
+    border: 10px solid rgba(255, 255, 255, 0.1);
+    border-top: 10px solid #ff7a18; /* 红色渐变 */
+    border-radius: 50%;
+    animation: rotate 1.5s linear infinite, pulse 1.5s ease-in-out infinite; /* 旋转和闪烁动画 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 旋转动画 */
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 闪烁效果 */
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 10px 5px rgba(255, 122, 24, 0.6); }
+    50% { box-shadow: 0 0 20px 10px rgba(255, 122, 24, 1); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
