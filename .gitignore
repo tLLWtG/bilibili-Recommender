@@ -166,3 +166,7 @@ recvideo.json
 saved_model/best_model.weights.h5
 saved_model/feature_processor.pkl
 saved_model/training_loss.png
+app/static/user_img
+user_data/cookie.txt
+hotVideo.json
+historyVideo.json

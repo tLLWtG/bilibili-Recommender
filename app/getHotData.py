@@ -44,6 +44,7 @@ def get_hot_data(cookie, len):
         for video_info in videos_info['data']['list'] :
             sigle_res = {}
             sigle_res["bvid"] = video_info['bvid']
+            sigle_res["title"] = video_info['title']
             sigle_res["pic"] = video_info["pic"]
             sigle_res['author'] = video_info['owner']['name']
             sigle_res["view"] = video_info["stat"]['view']
