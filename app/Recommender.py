@@ -1,7 +1,7 @@
 '''
 Author: wlaten
 Date: 2024-12-15 13:56:25
-LastEditTime: 2024-12-15 18:19:12
+LastEditTime: 2024-12-15 22:04:41
 Discription: file content
 '''
 
@@ -21,10 +21,12 @@ class Recommender:
         下面会调用爬取数据然后建立模型
         """
         self.cookies = cookies
-        self.video_pool = []
+        self.video_pool_hot = []
+        self.video_pool_recommend = []
         
         self.processor = FeatureProcessor()
-        self.processed_data, self.labels, self.max_tags = load_and_process_data(None, self.processor, cookies)
+        self.processed_data, self.labels, self.max_tags = load_and_process_data("historyVideo.json", self.processor)
+        # self.processed_data, self.labels, self.max_tags = load_and_process_data(None, self.processor, cookies)
         self.class_weights_array = class_weight.compute_class_weight(
             class_weight='balanced',
             classes=np.unique(self.labels),
@@ -110,30 +112,32 @@ class Recommender:
         """
         pass
     
-    def expand_pool_from_hot(self, video_cnt):
+    def expand_pool(self, pool_type, video_cnt):
         """
-        从热门视频中扩充推荐池
+        从热门或推荐视频中扩充推荐池
+        pool_type: 推荐池类型，hot或者recommend
         """
-        data = get_hot_data(self.cookies, video_cnt)
-        self.video_pool += data
+        if pool_type == 'hot':
+            data = get_hot_data(self.cookies, video_cnt)
+            self.video_pool_hot += data
+        elif pool_type == 'recommend':
+            data = get_recommand_data(self.cookies, video_cnt)
+            self.video_pool_recommend += data
     
-    def expand_pool_from_recommend(self, video_cnt):
-        """
-        从推荐视频中扩充推荐池
-        """
-        data = get_recommand_data(self.cookies, video_cnt)
-        self.video_pool += data
-    
-    def recommend(self, video_cnt = 1):
+    def recommend(self, pool_type, video_cnt = 1):
         """
         返回推荐池中最推荐的视频，返回的是一个视频列表
         返回后会pop掉这些视频
+        如果视频不够会自己添加
+        pool_type: 推荐池类型，hot或者recommend
         """
-        if (video_cnt > len(self.video_pool)):
-            self.expand_pool_from_recommend(video_cnt * 3 - len(self.video_pool))
+        pool = self.video_pool_hot if pool_type == 'hot' else self.video_pool_recommend
+        
+        if (video_cnt > len(pool)):
+            self.expand_pool(pool_type, video_cnt * 3 - len(pool))
         
         processed_videos = []
-        for video in self.video_pool:
+        for video in pool:
             valid_tags = [tag for tag in video['tag'] if tag in self.processor.tag2idx]
             if not valid_tags:
                 continue
@@ -195,6 +199,9 @@ class Recommender:
         return top_videos
     
 if __name__ == "__main__":
-    debug_cookies = "your cookies"
+    cookie_path = os.path.join("user_data", "cookie.txt")
+    with open(cookie_path, "r", encoding="utf-8") as file:
+        debug_cookies = file.read().strip()
+        
     recommender = Recommender(debug_cookies)
-    print(recommender.recommend(5))
+    print(recommender.recommend("hot",5))
