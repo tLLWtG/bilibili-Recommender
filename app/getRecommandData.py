@@ -34,6 +34,7 @@ def get_recommand_data(cookie, len):
             sigle_res["author"] = video_info["owner"]["name"]
             sigle_res["view"] = video_info["stat"]["view"]
             sigle_res["like"] = video_info["stat"]["like"]
+            sigle_res["duration"] = video_info["duration"]
             # tag比较麻烦，需要单独去获取详细信息
             url_2 = (
                 "https://api.bilibili.com/x/web-interface/view/detail?bvid="

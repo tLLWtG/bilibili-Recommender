@@ -12,7 +12,6 @@ from app.getHistoryData import get_history_data
 from app.getHotData import get_hot_data
 from app.getRecommandData import get_recommand_data
 
-
 def create_app():
     app = Flask(__name__)
 
