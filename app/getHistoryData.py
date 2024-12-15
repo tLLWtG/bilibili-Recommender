@@ -1,7 +1,6 @@
 import requests
 import json
 
-from tqdm import tqdm
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
