@@ -11,6 +11,8 @@ from app.getHistoryData import get_history_data
 from app.getHotData import get_hot_data
 from app.getRecommandData import get_recommand_data
 
+from app.Recommender import Recommender
+
 
 # app = Flask(__name__)
 
@@ -30,6 +32,8 @@ cookie_str = ""
 
 img_path = "app/static/user_img"
 img_path_rel = "static/user_img"
+
+recommender = None
 
 
 # 申请二维码 url
@@ -124,18 +128,18 @@ def get_history_info():
     return history_info
 
 
-def get_hot_info():
-    hot_info = get_hot_data(cookie_str, 10)
-    for info in hot_info:
-        download_img(info["pic"])
-    return hot_info
+# def get_hot_info():
+#     hot_info = get_hot_data(cookie_str, 10)
+#     for info in hot_info:
+#         download_img(info["pic"])
+#     return hot_info
 
 
-def get_explore_info():
-    explore_info = get_recommand_data(cookie_str, 10)
-    for info in explore_info:
-        download_img(info["pic"])
-    return explore_info
+# def get_explore_info():
+#     explore_info = get_recommand_data(cookie_str, 10)
+#     for info in explore_info:
+#         download_img(info["pic"])
+#     return explore_info
 
 
 # 首页路由
@@ -248,7 +252,14 @@ def logout():
 
 # @app.route("/api/recommend-hot-vid", methods=["GET"])
 def recommend_hot_vid():
-    res = get_hot_info()
+    global recommender
+    if recommender == None:
+        recommender = Recommender(cookie_str)
+    res = recommender.recommend("hot", 8)
+    for info in res:
+        download_img(info["pic"])
+
+    # res = get_hot_info()
     for x in res:
         parsed_url = urlparse(x["pic"])
         file_name = os.path.basename(parsed_url.path)
@@ -259,7 +270,13 @@ def recommend_hot_vid():
 
 # @app.route("/api/recommend-explore-vid", methods=["GET"])
 def recommend_explore_vid():
-    res = get_explore_info()
+    global recommender
+    if recommender == None:
+        recommender = Recommender(cookie_str)
+    res = recommender.recommend("recommend", 8)
+    for info in res:
+        download_img(info["pic"])
+    # res = get_explore_info()
     for x in res:
         parsed_url = urlparse(x["pic"])
         file_name = os.path.basename(parsed_url.path)
