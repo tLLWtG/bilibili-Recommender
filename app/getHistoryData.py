@@ -99,24 +99,24 @@ def get_fav_data(user_mid, headers, maxcnt=20):
                 try:
                     response = session.get(detail_info_url, headers=headers, timeout=10)
                     response.raise_for_status()
-                    vedio_detail = response.json()
-                    if vedio_detail['code'] != 0:
-                        print(vedio_detail['message'])
+                    video_detail = response.json()
+                    if video_detail['code'] != 0:
+                        print(video_detail['message'])
                         print(detail_info_url)
                         continue
                 except requests.exceptions.RequestException as e:
                     print(f"请求详情信息失败：{e}")
                     continue
                 
-                # print(vedio_detail['data'])
+                # print(video_detail['data'])
                 
-                video['duration'] = vedio_detail['data']['View']['duration']
+                video['duration'] = video_detail['data']['View']['duration']
                 video['progress'] = video['duration'] / 2       # 这个api里没有，取个均值意思一下
-                video['tag'] = [tag['tag_name'] for tag in vedio_detail['data']['Tags']]
-                video['like'] = vedio_detail['data']['View']['stat']['like']
-                video['reply'] = vedio_detail['data']['View']['stat']['reply']
-                video['favorite'] = vedio_detail['data']['View']['stat']['favorite']
-                video['share'] = vedio_detail['data']['View']['stat']['share']
+                video['tag'] = [tag['tag_name'] for tag in video_detail['data']['Tags']]
+                video['like'] = video_detail['data']['View']['stat']['like']
+                video['reply'] = video_detail['data']['View']['stat']['reply']
+                video['favorite'] = video_detail['data']['View']['stat']['favorite']
+                video['share'] = video_detail['data']['View']['stat']['share']
                 
                 all_videos.append(video)
                 
@@ -188,69 +188,69 @@ def get_history_data(cookie, history_len):  # [改了个变量名因为和len()�
         # 解析 JSON 数据
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            vedios_info = response.json()
-            if(vedios_info['code'] != 0):
-                print(vedios_info['message'])
+            videos_info = response.json()
+            if(videos_info['code'] != 0):
+                print(videos_info['message'])
                 print(url)
                 continue
         else:
             print(f"请求失败，状态码：{response.status_code}")
         
-        for vedio_info in vedios_info['data'] :        
+        for video_info in videos_info['data'] :        
             sigle_res = {}
-            sigle_res["bvid"] = vedio_info['bvid']
-            sigle_res["pic"] = vedio_info["pic"]
-            sigle_res['author'] = vedio_info['owner']['name']
-            sigle_res["view"] = vedio_info["stat"]['view']
-            sigle_res["like"] = vedio_info["stat"]['like']
-            sigle_res["favorite"] = vedio_info["stat"]['favorite']
-            sigle_res["coin"] = vedio_info["stat"]['coin']
-            sigle_res["share"] = vedio_info["stat"]['share']
+            sigle_res["bvid"] = video_info['bvid']
+            sigle_res["pic"] = video_info["pic"]
+            sigle_res['author'] = video_info['owner']['name']
+            sigle_res["view"] = video_info["stat"]['view']
+            sigle_res["like"] = video_info["stat"]['like']
+            sigle_res["favorite"] = video_info["stat"]['favorite']
+            sigle_res["coin"] = video_info["stat"]['coin']
+            sigle_res["share"] = video_info["stat"]['share']
                 
             # [加入时长和进度]
-            sigle_res["duration"] = vedio_info["duration"]
-            sigle_res["progress"] = vedio_info["progress"]
-            if vedio_info["progress"] == -1:    # -1好像是看完了？
+            sigle_res["duration"] = video_info["duration"]
+            sigle_res["progress"] = video_info["progress"]
+            if video_info["progress"] == -1:    # -1好像是看完了？
                 sigle_res["progress"] = sigle_res["duration"]
                 
             # tag比价麻烦，需要单独去获取详细信息
-            url_2 = "https://api.bilibili.com/x/web-interface/view/detail?bvid=" + vedio_info['bvid']
+            url_2 = "https://api.bilibili.com/x/web-interface/view/detail?bvid=" + video_info['bvid']
             response = requests.get(url_2, headers=headers)
             if response.status_code == 200:
-                vedio_detail = response.json()
-                if(vedio_detail['code'] != 0):
-                    print(vedio_detail['message'])
+                video_detail = response.json()
+                if(video_detail['code'] != 0):
+                    print(video_detail['message'])
                     print(url_2)
                     continue
             else:
                 print(f"请求失败，状态码：{response.status_code}")      
-            #print(vedio_detail['data']['Tags'])
-            sigle_res['tag'] = [tag['tag_name'] for tag in vedio_detail['data']['Tags']]
+            #print(video_detail['data']['Tags'])
+            sigle_res['tag'] = [tag['tag_name'] for tag in video_detail['data']['Tags']]
                 
             # [加入是否被点赞和收藏]
-            sigle_res['isfaved'] = 1 if vedio_info['favorite'] else 0
-            url_2 = f"https://api.bilibili.com/x/web-interface/archive/has/like?aid={vedio_info['stat']['aid']}"
+            sigle_res['isfaved'] = 1 if video_info['favorite'] else 0
+            url_2 = f"https://api.bilibili.com/x/web-interface/archive/has/like?aid={video_info['stat']['aid']}"
             response = requests.get(url_2, headers=headers)
             if response.status_code == 200:
-                vedio_detail = response.json()
-                if(vedio_detail['code'] != 0):
-                    print(vedio_detail['message'])
+                video_detail = response.json()
+                if(video_detail['code'] != 0):
+                    print(video_detail['message'])
                     print(url_2)
                     continue      
             else:
                 print(f"请求失败，状态码：{response.status_code}")      
-            sigle_res['isliked'] = vedio_detail['data']
+            sigle_res['isliked'] = video_detail['data']
             
 
             res.append(sigle_res)
-            # print(vedio_info['bvid'], count)
+            # print(video_info['bvid'], count)
             count+=1
             print(f"已获取{count}条历史记录")
             if(count > history_len):
                 break
         page+=1     
         
-        with open('historyVedio.json', 'w', encoding='utf-8') as json_file:
+        with open('historyVideo.json', 'w', encoding='utf-8') as json_file:
         # 使用 json.dump() 将字典写入文件
             json.dump(res, json_file, indent=4,ensure_ascii=False)  # indent=4 用来让输出格式更易读   
     
