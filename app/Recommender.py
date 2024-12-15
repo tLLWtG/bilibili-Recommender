@@ -1,7 +1,7 @@
 '''
 Author: wlaten
 Date: 2024-12-15 13:56:25
-LastEditTime: 2024-12-15 17:57:16
+LastEditTime: 2024-12-15 18:19:12
 Discription: file content
 '''
 
@@ -130,7 +130,7 @@ class Recommender:
         返回后会pop掉这些视频
         """
         if (video_cnt > len(self.video_pool)):
-            self.expand_pool_from_recommend(video_cnt - len(self.video_pool))
+            self.expand_pool_from_recommend(video_cnt * 3 - len(self.video_pool))
         
         processed_videos = []
         for video in self.video_pool:
@@ -195,10 +195,6 @@ class Recommender:
         return top_videos
     
 if __name__ == "__main__":
-    
-    cookies = "buvid3=1; DedeUserID=43759809; DedeUserID__ckMd5=d0b26a50e850bda6; SESSDATA=eb3bff8b%2C1749468186%2Cc705c%2Ac1CjBVBpBBtFIRfiu3HADvHlzQNHbtfD9sXNAakQfKEZpxfStBsoGWXyR-1jWiMJwosLASVjg2VktkN1Z6X2FNTWhacHI3WWRGMDBwbDhSc1Fpemk3UHExN1RnY1dLTjExWW4tY1EtVE84ZDM4WXZqVXEzVlNwc29QMWVRMHNiOUJxeUE2UDJGSl9BIIEC; bili_jct=54298f3a03aaa7f9840ae975145f7318; sid=6q8uj7nf"
-    recommender = Recommender(cookies)
-    
-    recommender.expand_pool_from_hot(10)
-    recommender.expand_pool_from_recommend(10)
+    debug_cookies = "your cookies"
+    recommender = Recommender(debug_cookies)
     print(recommender.recommend(5))

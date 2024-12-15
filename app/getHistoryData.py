@@ -181,83 +181,74 @@ def get_history_data(cookie, history_len):  # [改了个变量名因为和len()�
     res = res + get_vote_data(cookie)
     print(f"已获取{len(res)}条收藏历史记录")
     
-    remaining = history_len - len(res)
-    if remaining <= 0:
-        return res[:history_len]
-    
-    with tqdm(total=history_len, desc="获取历史数据") as pbar:
-        pbar.update(count)
+    while(count <= history_len):
+        url = "https://api.bilibili.com/x/v2/history?pn="
+        str_page = str(page)
+        url += str_page
+        # 解析 JSON 数据
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            vedios_info = response.json()
+            if(vedios_info['code'] != 0):
+                print(vedios_info['message'])
+                print(url)
+                continue
+        else:
+            print(f"请求失败，状态码：{response.status_code}")
         
-        while(count <= history_len):
-            url = "https://api.bilibili.com/x/v2/history?pn="
-            str_page = str(page)
-            url += str_page
-            # 解析 JSON 数据
-            response = requests.get(url, headers=headers)
+        for vedio_info in vedios_info['data'] :        
+            sigle_res = {}
+            sigle_res["bvid"] = vedio_info['bvid']
+            sigle_res["pic"] = vedio_info["pic"]
+            sigle_res['author'] = vedio_info['owner']['name']
+            sigle_res["view"] = vedio_info["stat"]['view']
+            sigle_res["like"] = vedio_info["stat"]['like']
+            sigle_res["favorite"] = vedio_info["stat"]['favorite']
+            sigle_res["coin"] = vedio_info["stat"]['coin']
+            sigle_res["share"] = vedio_info["stat"]['share']
+                
+            # [加入时长和进度]
+            sigle_res["duration"] = vedio_info["duration"]
+            sigle_res["progress"] = vedio_info["progress"]
+            if vedio_info["progress"] == -1:    # -1好像是看完了？
+                sigle_res["progress"] = sigle_res["duration"]
+                
+            # tag比价麻烦，需要单独去获取详细信息
+            url_2 = "https://api.bilibili.com/x/web-interface/view/detail?bvid=" + vedio_info['bvid']
+            response = requests.get(url_2, headers=headers)
             if response.status_code == 200:
-                vedios_info = response.json()
-                if(vedios_info['code'] != 0):
-                    print(vedios_info['message'])
-                    print(url)
+                vedio_detail = response.json()
+                if(vedio_detail['code'] != 0):
+                    print(vedio_detail['message'])
+                    print(url_2)
                     continue
             else:
-                print(f"请求失败，状态码：{response.status_code}")
+                print(f"请求失败，状态码：{response.status_code}")      
+            #print(vedio_detail['data']['Tags'])
+            sigle_res['tag'] = [tag['tag_name'] for tag in vedio_detail['data']['Tags']]
+                
+            # [加入是否被点赞和收藏]
+            sigle_res['isfaved'] = 1 if vedio_info['favorite'] else 0
+            url_2 = f"https://api.bilibili.com/x/web-interface/archive/has/like?aid={vedio_info['stat']['aid']}"
+            response = requests.get(url_2, headers=headers)
+            if response.status_code == 200:
+                vedio_detail = response.json()
+                if(vedio_detail['code'] != 0):
+                    print(vedio_detail['message'])
+                    print(url_2)
+                    continue      
+            else:
+                print(f"请求失败，状态码：{response.status_code}")      
+            sigle_res['isliked'] = vedio_detail['data']
             
-            for vedio_info in vedios_info['data'] :
-                
-                sigle_res = {}
-                sigle_res["bvid"] = vedio_info['bvid']
-                sigle_res["pic"] = vedio_info["pic"]
-                sigle_res['author'] = vedio_info['owner']['name']
-                sigle_res["view"] = vedio_info["stat"]['view']
-                sigle_res["like"] = vedio_info["stat"]['like']
-                sigle_res["favorite"] = vedio_info["stat"]['favorite']
-                sigle_res["coin"] = vedio_info["stat"]['coin']
-                sigle_res["share"] = vedio_info["stat"]['share']
-                
-                # [加入时长和进度]
-                sigle_res["duration"] = vedio_info["duration"]
-                sigle_res["progress"] = vedio_info["progress"]
-                if vedio_info["progress"] == -1:    # -1好像是看完了？
-                    sigle_res["progress"] = sigle_res["duration"]
-                
-                # tag比价麻烦，需要单独去获取详细信息
-                url_2 = "https://api.bilibili.com/x/web-interface/view/detail?bvid=" + vedio_info['bvid']
-                response = requests.get(url_2, headers=headers)
-                if response.status_code == 200:
-                    vedio_detail = response.json()
-                    if(vedio_detail['code'] != 0):
-                        print(vedio_detail['message'])
-                        print(url_2)
-                        continue      
-                else:
-                    print(f"请求失败，状态码：{response.status_code}")      
-                #print(vedio_detail['data']['Tags'])
-                sigle_res['tag'] = [tag['tag_name'] for tag in vedio_detail['data']['Tags']]
-                
-                # [加入是否被点赞和收藏]
-                sigle_res['isfaved'] = 1 if vedio_info['favorite'] else 0
-                url_2 = f"https://api.bilibili.com/x/web-interface/archive/has/like?aid={vedio_info['stat']['aid']}"
-                response = requests.get(url_2, headers=headers)
-                if response.status_code == 200:
-                    vedio_detail = response.json()
-                    if(vedio_detail['code'] != 0):
-                        print(vedio_detail['message'])
-                        print(url_2)
-                        continue      
-                else:
-                    print(f"请求失败，状态码：{response.status_code}")      
-                sigle_res['isliked'] = vedio_detail['data']
-                
 
-                res.append(sigle_res)
-                # print(vedio_info['bvid'], count)
-                count+=1
-                if(count > history_len):
-                    break
+            res.append(sigle_res)
+            # print(vedio_info['bvid'], count)
+            count+=1
+            print(f"已获取{count}条历史记录")
+            if(count > history_len):
+                break
         page+=1     
-        
-        print(f"已获取{len(res)}条历史记录")
         
         with open('historyVedio.json', 'w', encoding='utf-8') as json_file:
         # 使用 json.dump() 将字典写入文件
