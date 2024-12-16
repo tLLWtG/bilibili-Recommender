@@ -219,6 +219,7 @@
                         const aElement = document.createElement('a');
                         aElement.href = "https://www.bilibili.com/video/" + item.bvid;  // 设置链接地址，这个链接可以是视频的播放页面，或你指定的页面
                         aElement.target = "_blank";  // 在新标签页中打开链接
+                        aElement.style.textDecoration = 'none';
 
                         // 创建图片元素
                         const imgElement = document.createElement('img');
@@ -247,6 +248,21 @@
                         pElement.style.color = '#333';
                         pElement.style.marginTop = '10px';
 
+                        // 创建RT
+                        const rtElement = document.createElement('p');
+                        rtElement.textContent = "RT: " + (10 * item.rating).toFixed(3);
+                        // 样式设计
+                        rtElement.style.textAlign = 'center';  // 居中对齐
+                        rtElement.style.fontSize = '16px';  // 设置更大的字体
+                        rtElement.style.fontWeight = 'bold';  // 粗体
+                        rtElement.style.color = '#ffffff';  // 字体颜色白色
+                        rtElement.style.background = 'linear-gradient(to right, #ff7e5f, #feb47b)';  // 渐变背景色
+                        rtElement.style.padding = '10px 20px';  // 内边距，给文本一些空间
+                        rtElement.style.borderRadius = '10px';  // 圆角边框
+                        rtElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';  // 阴影效果
+                        rtElement.style.marginTop = '20px';  // 设置更大的顶部间距
+                        rtElement.style.fontFamily = 'Arial, sans-serif';  // 字体
+
                         // 图片悬停效果
                         imgElement.addEventListener('mouseenter', () => {
                             imgElement.style.transform = 'scale(1.1)';  // 放大图片
@@ -258,6 +274,7 @@
                         // 将图片和文字元素添加到 <a> 标签中
                         aElement.appendChild(imgElement);
                         aElement.appendChild(pElement);
+                        aElement.appendChild(rtElement);
 
                         // 将 <a> 标签添加到 videoCoverDiv 中
                         videoCoverDiv.appendChild(aElement);
@@ -290,6 +307,7 @@
                         const aElement = document.createElement('a');
                         aElement.href = "https://www.bilibili.com/video/" + item.bvid;  // 设置链接地址，这个链接可以是视频的播放页面，或你指定的页面
                         aElement.target = "_blank";  // 在新标签页中打开链接
+                        aElement.style.textDecoration = 'none';
 
 
                         // 创建图片元素
@@ -318,6 +336,21 @@
                         pElement.style.fontWeight = 'bold';
                         pElement.style.color = '#333';
                         pElement.style.marginTop = '10px';
+                        
+                        // 创建RT
+                        const rtElement = document.createElement('p');
+                        rtElement.textContent = "RT: " + (10 * item.rating).toFixed(3);
+                        // 样式设计
+                        rtElement.style.textAlign = 'center';  // 居中对齐
+                        rtElement.style.fontSize = '16px';  // 设置更大的字体
+                        rtElement.style.fontWeight = 'bold';  // 粗体
+                        rtElement.style.color = '#ffffff';  // 字体颜色白色
+                        rtElement.style.background = 'linear-gradient(to right, #ff7e5f, #feb47b)';  // 渐变背景色
+                        rtElement.style.padding = '10px 20px';  // 内边距，给文本一些空间
+                        rtElement.style.borderRadius = '10px';  // 圆角边框
+                        rtElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';  // 阴影效果
+                        rtElement.style.marginTop = '20px';  // 设置更大的顶部间距
+                        rtElement.style.fontFamily = 'Arial, sans-serif';  // 字体
 
                         // 图片悬停效果
                         imgElement.addEventListener('mouseenter', () => {
@@ -330,6 +363,7 @@
                         // 将图片和文字元素添加到 <a> 标签中
                         aElement.appendChild(imgElement);
                         aElement.appendChild(pElement);
+                        aElement.appendChild(rtElement);
 
                         // 将 <a> 标签添加到 videoCoverDiv 中
                         videoCoverDiv.appendChild(aElement);
